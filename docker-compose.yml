@@ -22,7 +22,7 @@ services:
 
     # Persist runner work directory between container restarts
     volumes:
-      - runner_data:${RUNNER_WORKDIR}
+      - ./runner-data:${RUNNER_WORKDIR}
 
       # Optional but commonly required for Docker-based GitHub Actions jobs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -31,7 +31,3 @@ services:
       - ./scripts/entrypoint.sh:/entrypoint.sh:ro
 
     entrypoint: ["/bin/bash", "/entrypoint.sh"]
-
-volumes:
-  runner_data:
-    name: github_runner_data
