@@ -1,0 +1,37 @@
+services:
+  runner:
+    # Official GitHub Actions runner image (multi-arch, includes ARM64 support)
+    image: ghcr.io/actions/actions-runner:latest
+    container_name: github-runner
+    restart: unless-stopped
+
+    # Load runtime configuration from local .env file
+    env_file:
+      - .env
+
+    environment:
+      # Required runner registration settings
+      GITHUB_URL: ${GITHUB_URL}
+      RUNNER_TOKEN: ${RUNNER_TOKEN}
+      RUNNER_NAME: ${RUNNER_NAME}
+      RUNNER_WORKDIR: ${RUNNER_WORKDIR}
+      # Optional custom labels (tags), comma-separated
+      RUNNER_LABELS: ${RUNNER_LABELS:-}
+      # Optional explicit runner installation path inside the container
+      RUNNER_DIR: ${RUNNER_DIR:-}
+
+    # Persist runner work directory between container restarts
+    volumes:
+      - runner_data:${RUNNER_WORKDIR}
+
+      # Optional but commonly required for Docker-based GitHub Actions jobs
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # Custom startup script for registration and cleanup lifecycle
+      - ./scripts/entrypoint.sh:/entrypoint.sh:ro
+
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+
+volumes:
+  runner_data:
+    name: github_runner_data

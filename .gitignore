@@ -1,0 +1,7 @@
+.idea
+# Local environment file with secrets
+.env
+
+# Optional local runner directories if bind mounts are used instead of named volumes
+runner-data/
+_work/
